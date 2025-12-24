@@ -466,106 +466,161 @@ foreach ($aging_data as $category => $data) {
                         </div>
                     </section>
 
-                    <!-- Navigation Tabs -->
-                    <div class="mb-6">
-                        <div class="border-b border-gray-200">
-                            <nav class="-mb-px flex space-x-8">
-                                <a href="#" class="border-green-500 text-green-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                    All Invoices
-                                </a>
-                                <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                    Overdue
-                                </a>
-                                <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                    Paid
-                                </a>
-                                <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                    Aging Report
-                                </a>
-                            </nav>
-                        </div>
-                    </div>
-
-                    <!-- Invoices Table -->
+                  
+                            <!-- Combined Invoices & Collections Table -->
                     <section class="glass-effect p-6 rounded-2xl shadow-sm">
                         <div class="mb-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">All Invoices</h3>
-                            <p class="text-gray-600">Manage and track all customer invoices and payments.</p>
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">Invoices & Collections</h3>
+                                    <p class="text-gray-600">Manage invoices and review pending collections in one place.</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button id="showInvoicesBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        Invoices (<?php echo $invoice_count; ?>)
+                                    </button>
+                                    <button id="showCollectionsBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                                        Pending Collections
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <!-- Invoices Table (Default View) -->
+                        <div id="invoicesTable" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                             <div class="overflow-x-auto">
                                 <table class="w-full">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference #</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue Date</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <?php if (count($invoices) > 0): ?>
                                             <?php foreach ($invoices as $invoice): ?>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?php echo htmlspecialchars($invoice['invoice_number']); ?></td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($invoice['customer_name']); ?></td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱<?php echo number_format($invoice['amount'], 2); ?></td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱<?php echo number_format($invoice['balance'], 2); ?></td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo date('Y-m-d', strtotime($invoice['invoice_date'])); ?></td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo date('Y-m-d', strtotime($invoice['due_date'])); ?></td>
+                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            <i data-lucide="file-text" class="w-3 h-3 mr-1"></i>
+                                                            Invoice
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        <?php echo htmlspecialchars($invoice['invoice_number']); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <div class="font-medium"><?php echo htmlspecialchars($invoice['customer_name']); ?></div>
+                                                        <?php if ($invoice['customer_email']): ?>
+                                                            <div class="text-xs text-gray-500"><?php echo htmlspecialchars($invoice['customer_email']); ?></div>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                                                        ₱<?php echo number_format($invoice['amount'], 2); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold <?php echo $invoice['balance'] > 0 ? 'text-red-600' : 'text-green-600'; ?>">
+                                                        ₱<?php echo number_format($invoice['balance'], 2); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        <?php echo date('M d, Y', strtotime($invoice['invoice_date'])); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        <?php 
+                                                        $due_date = date('M d, Y', strtotime($invoice['due_date']));
+                                                        $today = new DateTime();
+                                                        $due = new DateTime($invoice['due_date']);
+                                                        $interval = $today->diff($due);
+                                                        $days_diff = $interval->format('%R%a');
+                                                        
+                                                        if ($days_diff < 0 && $invoice['status'] != 'paid') {
+                                                            echo '<span class="text-red-600 font-medium">' . $due_date . '</span>';
+                                                        } else {
+                                                            echo $due_date;
+                                                        }
+                                                        ?>
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <?php
                                                         $status_class = '';
                                                         $status_text = '';
+                                                        $status_icon = '';
                                                         switch ($invoice['status']) {
                                                             case 'paid':
                                                                 $status_class = 'bg-green-100 text-green-800';
                                                                 $status_text = 'Paid';
+                                                                $status_icon = 'check-circle';
                                                                 break;
                                                             case 'pending':
                                                                 $status_class = 'bg-amber-100 text-amber-800';
                                                                 $status_text = 'Pending';
+                                                                $status_icon = 'clock';
                                                                 break;
                                                             case 'overdue':
                                                                 $status_class = 'bg-red-100 text-red-800';
                                                                 $status_text = 'Overdue';
+                                                                $status_icon = 'alert-triangle';
                                                                 break;
                                                             case 'disputed':
                                                                 $status_class = 'bg-orange-100 text-orange-800';
                                                                 $status_text = 'Disputed';
+                                                                $status_icon = 'alert-octagon';
                                                                 break;
                                                             default:
                                                                 $status_class = 'bg-gray-100 text-gray-800';
                                                                 $status_text = ucfirst($invoice['status']);
+                                                                $status_icon = 'file-text';
                                                         }
                                                         ?>
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $status_class; ?>">
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <?php echo $status_class; ?>">
+                                                            <i data-lucide="<?php echo $status_icon; ?>" class="w-3 h-3 mr-1"></i>
                                                             <?php echo $status_text; ?>
                                                         </span>
                                                     </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo htmlspecialchars($invoice['service_type'] ?? 'N/A'); ?></td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                        <button onclick="viewInvoice(<?php echo $invoice['id']; ?>)" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                                                        <?php if ($invoice['status'] == 'pending'): ?>
-                                                            <button onclick="sendReminder(<?php echo $invoice['id']; ?>)" class="text-green-600 hover:text-green-900 mr-3">Remind</button>
-                                                        <?php elseif ($invoice['status'] == 'overdue'): ?>
-                                                            <button onclick="escalateInvoice(<?php echo $invoice['id']; ?>)" class="text-red-600 hover:text-red-900 mr-3">Escalate</button>
-                                                        <?php else: ?>
-                                                            <button onclick="downloadReceipt(<?php echo $invoice['id']; ?>)" class="text-green-600 hover:text-green-900 mr-3">Receipt</button>
-                                                        <?php endif; ?>
+                                                        <div class="flex items-center gap-2">
+                                                            <button onclick="viewInvoice(<?php echo $invoice['id']; ?>)" 
+                                                                    class="flex items-center gap-1 text-blue-600 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50">
+                                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                                                View
+                                                            </button>
+                                                            <?php if ($invoice['status'] == 'pending'): ?>
+                                                                <button onclick="sendReminder(<?php echo $invoice['id']; ?>)" 
+                                                                        class="flex items-center gap-1 text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50">
+                                                                    <i data-lucide="bell" class="w-4 h-4"></i>
+                                                                    Remind
+                                                                </button>
+                                                            <?php elseif ($invoice['status'] == 'overdue'): ?>
+                                                                <button onclick="escalateInvoice(<?php echo $invoice['id']; ?>)" 
+                                                                        class="flex items-center gap-1 text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50">
+                                                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                                                    Escalate
+                                                                </button>
+                                                            <?php elseif ($invoice['status'] == 'paid'): ?>
+                                                                <button onclick="downloadReceipt(<?php echo $invoice['id']; ?>)" 
+                                                                        class="flex items-center gap-1 text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50">
+                                                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                                                    Receipt
+                                                                </button>
+                                                            <?php endif; ?>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">
-                                                    No invoices found.
+                                                <td colspan="9" class="px-6 py-8 text-center">
+                                                    <div class="flex flex-col items-center justify-center">
+                                                        <i data-lucide="file-text" class="w-12 h-12 text-gray-400 mb-3"></i>
+                                                        <p class="text-gray-500">No invoices found.</p>
+                                                        <p class="text-sm text-gray-400 mt-1">Create your first invoice to get started.</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endif; ?>
@@ -573,124 +628,656 @@ foreach ($aging_data as $category => $data) {
                                 </table>
                             </div>
                         </div>
-                    </section>
 
-                    <!-- Aging Analysis -->
-                    <section class="glass-effect p-6 rounded-2xl shadow-sm mt-6">
-                        <div class="mb-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Aging Analysis</h3>
-                            <p class="text-gray-600">Breakdown of receivables by aging period.</p>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <!-- Current -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold text-gray-800 mb-1">Current</h4>
-                                <p class="text-2xl font-bold text-green-600 mb-2">₱<?php echo number_format($aging_data['current']['amount'], 2); ?></p>
-                                <p class="text-sm text-gray-500"><?php echo $aging_data['current']['count']; ?> invoices</p>
-                                <div class="mt-3">
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full" style="width: <?php echo $aging_data['current']['percentage']; ?>%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 1-30 Days -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                                <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold text-gray-800 mb-1">1-30 Days</h4>
-                                <p class="text-2xl font-bold text-amber-600 mb-2">₱<?php echo number_format($aging_data['1_30_days']['amount'], 2); ?></p>
-                                <p class="text-sm text-gray-500"><?php echo $aging_data['1_30_days']['count']; ?> invoices</p>
-                                <div class="mt-3">
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-amber-500 h-2 rounded-full" style="width: <?php echo $aging_data['1_30_days']['percentage']; ?>%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 31-60 Days -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i data-lucide="alert-circle" class="w-6 h-6 text-orange-600"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold text-gray-800 mb-1">31-60 Days</h4>
-                                <p class="text-2xl font-bold text-orange-600 mb-2">₱<?php echo number_format($aging_data['31_60_days']['amount'], 2); ?></p>
-                                <p class="text-sm text-gray-500"><?php echo $aging_data['31_60_days']['count']; ?> invoices</p>
-                                <div class="mt-3">
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo $aging_data['31_60_days']['percentage']; ?>%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 60+ Days -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold text-gray-800 mb-1">60+ Days</h4>
-                                <p class="text-2xl font-bold text-red-600 mb-2">₱<?php echo number_format($aging_data['60_plus_days']['amount'], 2); ?></p>
-                                <p class="text-sm text-gray-500"><?php echo $aging_data['60_plus_days']['count']; ?> invoices</p>
-                                <div class="mt-3">
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-red-500 h-2 rounded-full" style="width: <?php echo $aging_data['60_plus_days']['percentage']; ?>%"></div>
-                                    </div>
-                                </div>
+                        <!-- Pending Collections Table (Hidden by Default) -->
+                        <div id="collectionsTable" class="bg-white rounded-xl border border-gray-200 overflow-hidden" style="display: none;">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collection Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pendingCollectionsBody" class="bg-white divide-y divide-gray-200">
+                                        <!-- Data will be loaded via JavaScript -->
+                                        <tr id="collectionsLoadingRow">
+                                            <td colspan="9" class="px-6 py-8 text-center">
+                                                <div class="flex flex-col items-center justify-center">
+                                                    <i data-lucide="loader-2" class="w-8 h-8 text-gray-400 mb-3 animate-spin"></i>
+                                                    <p class="text-gray-500">Loading pending collections...</p>
+                                                    <p class="text-sm text-gray-400 mt-1">Please wait while we fetch the data.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </section>
-                </div>
-            </main>
-        </div>
-    </div>
 
-   
+                    <script>
+// Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const invoicesBtn = document.getElementById('showInvoicesBtn');
+    const collectionsBtn = document.getElementById('showCollectionsBtn');
+    const invoicesTable = document.getElementById('invoicesTable');
+    const collectionsTable = document.getElementById('collectionsTable');
+    
+    // Default state - show invoices
+    invoicesBtn.classList.add('bg-blue-600', 'text-white');
+    invoicesBtn.classList.remove('bg-gray-200', 'text-gray-700');
+    collectionsBtn.classList.add('bg-gray-200', 'text-gray-700');
+    collectionsBtn.classList.remove('bg-blue-600', 'text-white');
+    
+    invoicesTable.style.display = 'block';
+    collectionsTable.style.display = 'none';
+    
+    // Load collections data initially
+    loadPendingCollections();
+    
+    // Switch to invoices tab
+    invoicesBtn.addEventListener('click', function() {
+        // Update button styles
+        invoicesBtn.classList.add('bg-blue-600', 'text-white');
+        invoicesBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        collectionsBtn.classList.add('bg-gray-200', 'text-gray-700');
+        collectionsBtn.classList.remove('bg-blue-600', 'text-white');
+        
+        // Show/hide tables
+        invoicesTable.style.display = 'block';
+        collectionsTable.style.display = 'none';
+    });
+    
+    // Switch to collections tab
+    collectionsBtn.addEventListener('click', function() {
+        // Update button styles
+        collectionsBtn.classList.add('bg-blue-600', 'text-white');
+        collectionsBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        invoicesBtn.classList.add('bg-gray-200', 'text-gray-700');
+        invoicesBtn.classList.remove('bg-blue-600', 'text-white');
+        
+        // Show/hide tables
+        collectionsTable.style.display = 'block';
+        invoicesTable.style.display = 'none';
+        
+        // Refresh collections data
+        loadPendingCollections();
+    });
+});
 
-   
-    <!-- View Invoice Modal -->
-    <div id="viewInvoiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal" style="display: none;">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-gray-800">Invoice Details</h3>
-                    <button onclick="closeModal('viewInvoiceModal')" class="text-gray-400 hover:text-gray-500">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6">
-                <div id="invoiceDetails" class="space-y-4">
-                    <!-- Invoice details will be loaded here -->
-                </div>
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Actions</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="deleteInvoice(currentInvoiceId)" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            Delete
+// Updated loadPendingCollections function with better UI
+async function loadPendingCollections() {
+    try {
+        const response = await fetch('API/collections_api.php?action=get_pending_collections');
+        const result = await response.json();
+        
+        const tableBody = document.getElementById('pendingCollectionsTable');
+        const loadingRow = document.getElementById('loadingRow');
+        
+        if (loadingRow) {
+            loadingRow.remove();
+        }
+        
+        if (result.status === 'success' && result.data.length > 0) {
+            tableBody.innerHTML = '';
+            
+            result.data.forEach(collection => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition-colors';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <i data-lucide="dollar-sign" class="w-3 h-3 mr-1"></i>
+                            Collection
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ${collection.request_id}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div class="font-medium">${collection.customer_name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                        ₱${parseFloat(collection.amount).toFixed(2)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.service_type}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="inline-flex items-center gap-1">
+                            <i data-lucide="${getPaymentMethodIcon(collection.payment_method)}" class="w-3 h-3"></i>
+                            ${collection.payment_method}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.collection_date ? new Date(collection.collection_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(collection.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                            <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                            Pending
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="viewCollection(${collection.id})" 
+                                class="flex items-center gap-1 text-blue-600 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            Review
                         </button>
-                        <button onclick="markForCompliance(currentInvoiceId)" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
-                            <i data-lucide="shield-check" class="w-4 h-4"></i>
-                            For Compliance
-                        </button>
-                        <button onclick="markAsReceived(currentInvoiceId)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i>
-                            Received
-                        </button>
-                        <button onclick="issueInvoice(currentInvoiceId)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4"></i>
-                            Issue Invoice
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Update collections button count
+            const collectionsBtn = document.getElementById('showCollectionsBtn');
+            collectionsBtn.innerHTML = `Pending Collections (${result.data.length})`;
+            
+        } else {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="10" class="px-6 py-8 text-center">
+                        <div class="flex flex-col items-center justify-center">
+                            <i data-lucide="check-circle" class="w-12 h-12 text-green-400 mb-3"></i>
+                            <p class="text-gray-500">No pending collections</p>
+                            <p class="text-sm text-gray-400 mt-1">All collections have been processed.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Update collections button count
+            const collectionsBtn = document.getElementById('showCollectionsBtn');
+            collectionsBtn.innerHTML = 'Pending Collections (0)';
+        }
+        
+        // Reinitialize icons
+        lucide.createIcons();
+        
+    } catch (error) {
+        console.error('Error loading pending collections:', error);
+        const tableBody = document.getElementById('pendingCollectionsTable');
+        
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="10" class="px-6 py-8 text-center">
+                    <div class="flex flex-col items-center justify-center">
+                        <i data-lucide="alert-circle" class="w-12 h-12 text-red-400 mb-3"></i>
+                        <p class="text-gray-500">Error loading collections</p>
+                        <p class="text-sm text-gray-400 mt-1">Please try refreshing the page.</p>
+                        <button onclick="loadPendingCollections()" 
+                                class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            Retry
                         </button>
                     </div>
+                </td>
+            </tr>
+        `;
+        
+        // Reinitialize icons
+        lucide.createIcons();
+    }
+}
+
+// Helper function to get payment method icon
+function getPaymentMethodIcon(method) {
+    switch(method.toLowerCase()) {
+        case 'cash':
+            return 'dollar-sign';
+        case 'bank_transfer':
+            return 'banknote';
+        case 'credit_card':
+            return 'credit-card';
+        case 'check':
+            return 'file-text';
+        case 'online':
+            return 'globe';
+        default:
+            return 'dollar-sign';
+    }
+}
+</script>
+
+
+
+
+    <script>
+        // Global variables
+let currentCollectionId = null;
+let currentCollectionData = null;
+
+// Load pending collections on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadPendingCollections();
+});
+
+// Load pending collections from API
+async function loadPendingCollections() {
+    try {
+        const response = await fetch('API/collections_api.php?action=get_pending_collections');
+        const result = await response.json();
+        
+        const tableBody = document.getElementById('pendingCollectionsTable');
+        const loadingRow = document.getElementById('loadingRow');
+        
+        if (loadingRow) {
+            loadingRow.remove();
+        }
+        
+        if (result.status === 'success' && result.data.length > 0) {
+            tableBody.innerHTML = '';
+            
+            result.data.forEach(collection => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ${collection.request_id}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${collection.customer_name}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                        ₱${parseFloat(collection.amount).toFixed(2)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.service_type}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.due_date ? new Date(collection.due_date).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.payment_method}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.collection_date ? new Date(collection.collection_date).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${collection.status}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="viewCollection(${collection.id})" 
+                                class="text-blue-600 hover:text-blue-900 flex items-center gap-1">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            View
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">
+                        <div class="flex flex-col items-center justify-center py-4">
+                            <i data-lucide="clipboard-check" class="w-12 h-12 text-gray-400 mb-2"></i>
+                            <p>No pending collections found.</p>
+                            <p class="text-xs text-gray-500">All collections have been processed.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading pending collections:', error);
+        const tableBody = document.getElementById('pendingCollectionsTable');
+        const loadingRow = document.getElementById('loadingRow');
+        
+        if (loadingRow) {
+            loadingRow.innerHTML = `
+                <td colspan="9" class="px-6 py-4 text-center text-sm text-red-500">
+                    <div class="flex items-center justify-center">
+                        <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i>
+                        Error loading data. Please try again.
+                    </div>
+                </td>
+            `;
+        }
+    }
+}
+
+// View collection details
+async function viewCollection(collectionId) {
+    try {
+        currentCollectionId = collectionId;
+        
+        const response = await fetch(`API/collections_api.php?action=get_collection_details&id=${collectionId}`);
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            currentCollectionData = result.data;
+            displayCollectionDetails(result.data);
+            openModal('viewCollectionModal');
+        } else {
+            showNotification('Failed to load collection details', 'error');
+        }
+    } catch (error) {
+        showNotification('Network error: ' + error.message, 'error');
+    }
+}
+
+// Display collection details in modal
+function displayCollectionDetails(collection) {
+    const detailsContainer = document.getElementById('collectionDetails');
+    
+    // Format dates
+    const createdDate = new Date(collection.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const updatedDate = collection.updated_at ? 
+        new Date(collection.updated_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : 
+        createdDate;
+    
+    detailsContainer.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+            
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Request ID</label>
+                    <p class="text-lg font-semibold text-gray-900">${collection.request_id}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                    <p class="text-gray-900">${collection.customer_name}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
+                    <p class="text-gray-900">${collection.service_type}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                    <p class="text-gray-900">${collection.payment_method}</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        ${collection.status}
+                    </span>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                    <p class="text-2xl font-bold text-gray-900">₱${parseFloat(collection.amount).toFixed(2)}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <p class="text-gray-900">${collection.due_date ? new Date(collection.due_date).toLocaleDateString() : 'N/A'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Collection Date</label>
+                    <p class="text-gray-900">${collection.collection_date ? new Date(collection.collection_date).toLocaleDateString() : 'N/A'}</p>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <p class="text-gray-900 bg-gray-50 p-3 rounded-lg">${collection.description || 'No description provided'}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Created At</label>
+                <p class="text-gray-900">${createdDate}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Last Updated</label>
+                <p class="text-gray-900">${updatedDate}</p>
+            </div>
+        </div>
+        ${collection.notes ? `
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <p class="text-gray-900 bg-yellow-50 p-3 rounded-lg">${collection.notes}</p>
+        </div>
+        ` : ''}
+    `;
+}
+
+// Mark collection as Received
+function markCollectionAsReceived() {
+    if (!currentCollectionId) return;
+    
+    Swal.fire({
+        title: 'Mark as Received',
+        html: `
+            <div class="text-left">
+                <p class="mb-2">Customer: <strong>${currentCollectionData.customer_name}</strong></p>
+                <p class="mb-4">Amount: <strong>₱${parseFloat(currentCollectionData.amount).toFixed(2)}</strong></p>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Add Notes (Optional)</label>
+                    <textarea id="receiveNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Add any notes about this collection..."></textarea>
+                </div>
+                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <p class="text-sm text-green-800 flex items-center gap-2">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        This will create an invoice in Accounts Receivable
+                    </p>
+                </div>
+            </div>
+        `,
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonColor: '#16a34a',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Mark as Received',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            return {
+                notes: document.getElementById('receiveNotes').value
+            };
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const notes = result.value.notes;
+            
+            try {
+                const response = await fetch('API/collections_api.php?action=update_collection_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        id: currentCollectionId,
+                        status: 'RECEIVED',
+                        notes: notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Collection marked as received and added to accounts receivable.',
+                        icon: 'success',
+                        confirmButtonColor: '#16a34a',
+                    }).then(() => {
+                        closeModal('viewCollectionModal');
+                        loadPendingCollections();
+                        // Reload the page to update AR statistics
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error!', result.message || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'Network error: ' + error.message, 'error');
+            }
+        }
+    });
+}
+
+// Mark collection for Compliance
+function markCollectionForCompliance() {
+    if (!currentCollectionId) return;
+    
+    Swal.fire({
+        title: 'Mark for Compliance',
+        html: `
+            <div class="text-left">
+                <p class="mb-2">Customer: <strong>${currentCollectionData.customer_name}</strong></p>
+                <p class="mb-4">Amount: <strong>₱${parseFloat(currentCollectionData.amount).toFixed(2)}</strong></p>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Compliance Notes (Required)</label>
+                    <textarea id="complianceNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Specify compliance requirements..."></textarea>
+                </div>
+            </div>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#7e22ce',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Mark for Compliance',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const notes = document.getElementById('complianceNotes').value;
+            if (!notes.trim()) {
+                Swal.showValidationMessage('Please enter compliance notes');
+                return false;
+            }
+            return {
+                notes: notes
+            };
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const notes = result.value.notes;
+            
+            try {
+                const response = await fetch('API/collections_api.php?action=update_collection_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        id: currentCollectionId,
+                        status: 'FOR COMPLIANCE',
+                        notes: notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Collection marked for compliance review.',
+                        icon: 'success',
+                        confirmButtonColor: '#7e22ce',
+                    }).then(() => {
+                        closeModal('viewCollectionModal');
+                        loadPendingCollections();
+                    });
+                } else {
+                    Swal.fire('Error!', result.message || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'Network error: ' + error.message, 'error');
+            }
+        }
+    });
+}
+
+// Reject collection
+function rejectCollection() {
+    if (!currentCollectionId) return;
+    
+    Swal.fire({
+        title: 'Reject Collection',
+        html: `
+            <div class="text-left">
+                <p class="mb-2">Customer: <strong>${currentCollectionData.customer_name}</strong></p>
+                <p class="mb-4">Amount: <strong>₱${parseFloat(currentCollectionData.amount).toFixed(2)}</strong></p>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rejection Reason (Required)</label>
+                    <textarea id="rejectNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Specify reason for rejection..."></textarea>
+                </div>
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Reject Collection',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const notes = document.getElementById('rejectNotes').value;
+            if (!notes.trim()) {
+                Swal.showValidationMessage('Please enter rejection reason');
+                return false;
+            }
+            return {
+                notes: notes
+            };
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const notes = result.value.notes;
+            
+            try {
+                const response = await fetch('API/collections_api.php?action=update_collection_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        id: currentCollectionId,
+                        status: 'REJECTED',
+                        notes: notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    Swal.fire({
+                        title: 'Rejected!',
+                        text: 'Collection has been rejected.',
+                        icon: 'success',
+                        confirmButtonColor: '#dc2626',
+                    }).then(() => {
+                        closeModal('viewCollectionModal');
+                        loadPendingCollections();
+                    });
+                } else {
+                    Swal.fire('Error!', result.message || 'Failed to reject collection', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'Network error: ' + error.message, 'error');
+            }
+        }
+    });
+}
+
+// Add auto-refresh for pending collections
+setInterval(() => {
+    loadPendingCollections();
+}, 30000); // Refresh every 30 seconds
+    </script>
+
+
 
     <script>
         // Initialize Lucide icons
@@ -738,7 +1325,7 @@ foreach ($aging_data as $category => $data) {
                 submitButton.textContent = 'Creating...';
                 submitButton.disabled = true;
                 
-                const response = await fetch('../API/accounts_receivable_api.php', {
+                const response = await fetch('API/accounts_receivable_api.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -773,7 +1360,7 @@ foreach ($aging_data as $category => $data) {
                 submitButton.textContent = 'Recording...';
                 submitButton.disabled = true;
                 
-                const response = await fetch('../API/accounts_receivable_api.php', {
+                const response = await fetch('API/accounts_receivable_api.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -800,7 +1387,7 @@ foreach ($aging_data as $category => $data) {
         // View invoice details
         async function viewInvoice(invoiceId) {
             try {
-                const response = await fetch(`../API/accounts_receivable_api.php?action=get_invoice&id=${invoiceId}`);
+                const response = await fetch(`API/accounts_receivable_api.php?action=get_invoice&id=${invoiceId}`);
                 const result = await response.json();
                 
                 if (result.status === 'success') {
@@ -904,7 +1491,7 @@ foreach ($aging_data as $category => $data) {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch('../API/accounts_receivable_api.php', {
+                        const response = await fetch('API/accounts_receivable_api.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

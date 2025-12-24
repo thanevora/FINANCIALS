@@ -34,18 +34,7 @@ $sidebar_collapsed = $_SESSION['sidebar_collapsed'] ?? false;
     <!-- Navigation Menu -->
     <div class="flex-1 flex flex-col overflow-hidden hover:overflow-y-auto">
         <nav class="flex-1 px-2 space-y-1">
-            <!-- DASHBOARD SECTION -->
-            <div class="px-4 py-2 mt-2 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Dashboard</p>
-            </div>
-            <a href="<?php echo $base_url; ?>/dashboard.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-sidebar-primary"></i>
-                    </div>
-                    <span class="ml-3 sidebar-text">Dashboard</span>
-                </div>
-            </a>
+            
 
             <!-- FINANCIAL MANAGEMENT SECTION -->
             <div class="px-4 py-2 mt-4 sidebar-section">
@@ -157,42 +146,7 @@ $sidebar_collapsed = $_SESSION['sidebar_collapsed'] ?? false;
                 </div>
             </a>
 
-            <!-- TOUR OPERATIONS SECTION -->
-            <div class="px-4 py-2 mt-4 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Tour Operations</p>
-            </div>
-            
-            <a href="<?php echo $base_url; ?>/tours/packages.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="map-pin" class="w-5 h-5 text-sidebar-primary"></i>
-                    </div>
-                    <span class="ml-3 sidebar-text">Tour Packages</span>
-                </div>
-            </a>
-            
-            <a href="<?php echo $base_url; ?>/tours/bookings.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="calendar" class="w-5 h-5 text-sidebar-primary"></i>
-                    </div>
-                    <span class="ml-3 sidebar-text">Bookings</span>
-                </div>
-            </a>
-
-        
-            <!-- ANALYTICS & REPORTING SECTION -->
-            <div class="px-4 py-2 mt-4 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Analytics</p>
-            </div>
-            <a href="<?php echo $base_url; ?>/analytics/reports.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-sidebar-primary"></i>
-                    </div>
-                    <span class="ml-3 sidebar-text">Reports</span>
-                </div>
-            </a>
+           
 
             <!-- ADMINISTRATION SECTION -->
             <div class="px-4 py-2 mt-4 sidebar-section">
