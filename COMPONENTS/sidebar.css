@@ -1,0 +1,140 @@
+   /* Mobile styles */
+    @media (max-width: 767px) {
+        #sidebar {
+            z-index: 40;
+            width: 16rem; /* w-64 equivalent */
+            left: 0;
+            top: 0;
+            bottom: 0;
+            transition: transform 0.1s ease;
+        }
+        
+        #sidebar.translate-x-0 {
+            transform: translateX(0);
+        }
+        
+        #sidebar.-translate-x-full {
+            transform: translateX(-100%);
+        }
+        
+        /* Optional overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 30;
+            display: none;
+        }
+        
+        #sidebar.translate-x-0 + .sidebar-overlay {
+            display: block;
+        }
+    }
+
+    /* Desktop styles */
+    .w-20 .sidebar-text {
+        display: none;
+    }
+    
+    .w-20 .flex.items-center {
+        justify-content: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .w-20 .collapse-title {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        justify-content: center;
+    }
+    
+    .w-20 .collapse-content {
+        display: none;
+    }
+    
+    .w-20 .text-xs.uppercase {
+        display: none;
+    }
+    
+    .w-20 .p-1.5.rounded-lg {
+        margin-right: 0;
+    }
+    
+    #sidebar-logo {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    #sidebar.loaded #sidebar-logo {
+        opacity: 1;
+    }
+    
+    /* Hide scrollbar but keep scrolling */
+    #sidebar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    
+    #sidebar::-webkit-scrollbar {
+        display: none;  /* Chrome, Safari and Opera */
+    }
+    
+    /* Only show scrollbar on hover */
+    .overflow-hidden {
+        overflow: hidden;
+    }
+    
+    .hover\:overflow-y-auto:hover {
+        overflow-y: auto;
+    }
+
+
+
+/* 🧠 SweetAlert Fix — ensures buttons are visible immediately */
+.swal2-styled {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #fff !important;
+  background-color: #3085d6 !important;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.swal2-styled:hover {
+  background-color: #2563eb !important; /* Tailwind's blue-600 */
+  transform: scale(1.03);
+}
+
+.swal2-cancel {
+  background-color: #e5e7eb !important; /* neutral-200 */
+  color: #111 !important;
+}
+.swal2-cancel:hover {
+  background-color: #d1d5db !important; /* neutral-300 */
+}
+
+/* Remove all SweetAlert hover effects */
+.swal2-confirm:hover,
+.swal2-cancel:hover,
+.swal2-deny:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    background-color: inherit !important;
+    filter: none !important;
+}
+
+/* Remove transitions */
+.swal2-confirm,
+.swal2-cancel,
+.swal2-deny {
+    transition: none !important;
+}
+
+/* Remove focus effects if desired */
+.swal2-confirm:focus,
+.swal2-cancel:focus,
+.swal2-deny:focus {
+    box-shadow: none !important;
+}

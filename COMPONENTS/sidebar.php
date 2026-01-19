@@ -1,31 +1,48 @@
 <?php
-// sidebar.php
-// $role = $_SESSION['role'] ?? 'guest';
-// $permissions = include 'USM/role_permissions.php';
-// $allowed_modules = $permissions[$role] ?? [];
-// $is_supervisor = ($role === 'supervisor' || $role === 'admin');
+// RBAC (Role-Based Access Control) Implementation - COMMENTED FOR TESTING
+// ================================================
+// To enable RBAC, uncomment the following lines and remove the test variables
+
+// $role = $_SESSION['role'] ?? 'guest'; // Get user role from session
+// $permissions = include 'USM/role_permissions.php'; // Load permissions config
+// $allowed_modules = $permissions[$role] ?? []; // Get allowed modules
+// $is_supervisor = ($role === 'supervisor' || $role === 'admin'); // Check supervisor
+
+// TESTING/DEVELOPMENT SETTINGS - REMOVE THESE WHEN ENABLING RBAC
+$allowed_modules = [
+    'financial_management',
+    'budget_management', 
+    'receivable',
+    'payable',
+    'disbursements',
+    'collections',
+    'ledger',
+    'administration',
+    'user_management'
+];
+$is_supervisor = true; // Set to true to show all menu items for testing
 
 // Define base path for consistent URL structure
-$base_url = '/FINANCIALS/'; // Adjust to your project base URL
+$base_url = '/FINANCIALS/'; // Correct full URL
 
-// Sidebar state from session
+// Sidebar state from session (for expandable/collapsible sidebar feature)
 $sidebar_collapsed = $_SESSION['sidebar_collapsed'] ?? false;
 ?>
 
-<div class="bg-sidebar border-sidebar-border pt-5 pb-4 flex flex-col fixed md:relative h-full transition-all duration-300 ease-in-out shadow-xl border-r z-20 w-64 md:<?php echo $sidebar_collapsed ? 'w-20' : 'w-64'; ?>" 
+<div class="bg-white pt-5 pb-4 flex flex-col fixed h-full transition-all duration-300 shadow-lg border-r z-20 w-64 md:<?php echo $sidebar_collapsed ? 'w-20' : 'w-64'; ?>" 
      id="sidebar"
      data-state="<?php echo $sidebar_collapsed ? 'collapsed' : 'expanded'; ?>">
     
     <!-- Sidebar Header -->
     <div class="flex items-center justify-between flex-shrink-0 px-4 mb-6">
         <div class="flex items-center gap-2">
-            <div class="h-10 w-10 rounded-lg bg-gradient-to-r from-sidebar-primary to-sidebar-primary/80 flex items-center justify-center">
-                <i data-lucide="plane" class="w-6 h-6 text-sidebar-primary-foreground"></i>
+            <div class="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center">
+                <i data-lucide="plane" class="w-6 h-6 text-white"></i>
             </div>
-            <h1 class="text-xl font-bold text-sidebar-foreground sidebar-text" id="sidebar-logo">
+            <h1 class="text-xl font-bold text-gray-800 sidebar-text" id="sidebar-logo">
                 System name
             </h1>
-            <h1 class="text-xl font-bold text-sidebar-foreground hidden" id="sonly">
+            <h1 class="text-xl font-bold text-gray-800 hidden" id="sonly">
                 TP
             </h1>
         </div>
@@ -34,161 +51,171 @@ $sidebar_collapsed = $_SESSION['sidebar_collapsed'] ?? false;
     <!-- Navigation Menu -->
     <div class="flex-1 flex flex-col overflow-hidden hover:overflow-y-auto">
         <nav class="flex-1 px-2 space-y-1">
-            
-
             <!-- FINANCIAL MANAGEMENT SECTION -->
-            <div class="px-4 py-2 mt-4 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Financial Management</p>
+            <?php if ($is_supervisor || in_array('financial_management', $allowed_modules)): ?>
+            <div class="px-4 py-2 mt-4">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider sidebar-text">Financial Management</p>
             </div>
             
             <!-- Budget Management Dropdown -->
+            <?php if ($is_supervisor || in_array('budget_management', $allowed_modules)): ?>
             <div class="relative menu-dropdown">
-                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group dropdown-toggle">
+                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group dropdown-toggle">
                     <div class="flex items-center">
-                        <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                            <i data-lucide="pie-chart" class="w-5 h-5 text-sidebar-primary"></i>
+                        <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                            <i data-lucide="pie-chart" class="w-5 h-5 text-blue-600"></i>
                         </div>
                         <span class="ml-3 sidebar-text">Budget Management</span>
                     </div>
-                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-sidebar-foreground/70 dropdown-icon"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-gray-400 dropdown-icon"></i>
                 </button>
                 
                 <!-- Dropdown Menu -->
                 <div class="dropdown-content overflow-hidden transition-all duration-300 max-h-0">
                     <div class="py-2 space-y-1">
-                        <a href="<?php echo $base_url; ?>/BUDGET/main.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="pie-chart" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>BUDGET/main.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="pie-chart" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Main Budget Management</span>
                         </a>
-                        <a href="<?php echo $base_url; ?>/BUDGET/sub - modules/budget_monitoring.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="bar-chart-3" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
-                            <span class="sidebar-text">Budget Monitoring</span>
-                        </a>
-                        <a href="<?php echo $base_url; ?>/BUDGET/sub - modules/budget_allocating.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="dollar-sign" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>BUDGET/sub-modules/budget_allocating.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="dollar-sign" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Budget Allocating</span>
                         </a>
-                        <a href="<?php echo $base_url; ?>/BUDGET/sub - modules/budget_proposal.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="file-text" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>BUDGET/sub-modules/budget_proposal.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="file-text" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Budget Proposal</span>
                         </a>
-                        <a href="<?php echo $base_url; ?>/BUDGET/sub - modules/budget_transactions.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="credit-card" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>BUDGET/sub-modules/budget_transactions.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="credit-card" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Budget Transactions</span>
                         </a>
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             
             <!-- Accounts Receivable -->
-            <a href="<?php echo $base_url; ?>/RECEIVABLE/main.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-sidebar-primary"></i>
+            <?php if ($is_supervisor || in_array('receivable', $allowed_modules)): ?>
+            <a href="<?php echo $base_url; ?>RECEIVABLE/main.php" class="block">
+                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group">
+                    <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <span class="ml-3 sidebar-text">Accounts Receivable</span>
                 </div>
             </a>
+            <?php endif; ?>
             
             <!-- Accounts Payable -->
-            <a href="<?php echo $base_url; ?>/PAYABLE/main.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="trending-down" class="w-5 h-5 text-sidebar-primary"></i>
+            <?php if ($is_supervisor || in_array('payable', $allowed_modules)): ?>
+            <a href="<?php echo $base_url; ?>PAYABLE/main.php" class="block">
+                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group">
+                    <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                        <i data-lucide="trending-down" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <span class="ml-3 sidebar-text">Accounts Payable</span>
                 </div>
             </a>
+            <?php endif; ?>
             
             <!-- Disbursement Management Dropdown -->
+            <?php if ($is_supervisor || in_array('disbursements', $allowed_modules)): ?>
             <div class="relative menu-dropdown">
-                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group dropdown-toggle">
+                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group dropdown-toggle">
                     <div class="flex items-center">
-                        <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                            <i data-lucide="wallet" class="w-5 h-5 text-sidebar-primary"></i>
+                        <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                            <i data-lucide="wallet" class="w-5 h-5 text-blue-600"></i>
                         </div>
                         <span class="ml-3 sidebar-text">Disbursements</span>
                     </div>
-                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-sidebar-foreground/70 dropdown-icon"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-gray-400 dropdown-icon"></i>
                 </button>
                 
                 <!-- Dropdown Menu -->
                 <div class="dropdown-content overflow-hidden transition-all duration-300 max-h-0">
                     <div class="py-2 space-y-1">
-                        <a href="<?php echo $base_url; ?>/DISBURSEMENT/sub-modules/main.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="bar-chart-3" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>DISBURSEMENT/sub-modules/main.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Disbursement Overview</span>
                         </a>
-                        <a href="<?php echo $base_url; ?>/DISBURSEMENT/sub-modules/disburse_allocation.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="dollar-sign" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>DISBURSEMENT/sub-modules/disburse_allocation.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="dollar-sign" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Disburse Allocation</span>
                         </a>
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             
-            <a href="<?php echo $base_url; ?>/COLLECTION/main.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="credit-card" class="w-5 h-5 text-sidebar-primary"></i>
+            <!-- Collections -->
+            <?php if ($is_supervisor || in_array('collections', $allowed_modules)): ?>
+            <a href="<?php echo $base_url; ?>COLLECTION/main.php" class="block">
+                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group">
+                    <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                        <i data-lucide="credit-card" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <span class="ml-3 sidebar-text">Collections</span>
                 </div>
             </a>
+            <?php endif; ?>
 
             <!-- General Ledger -->
-            <a href="<?php echo $base_url; ?>/LEDGER/main.php" class="block">
-                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="book-open" class="w-5 h-5 text-sidebar-primary"></i>
+            <?php if ($is_supervisor || in_array('ledger', $allowed_modules)): ?>
+            <a href="<?php echo $base_url; ?>LEDGER/main.php" class="block">
+                <div class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group">
+                    <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                        <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <span class="ml-3 sidebar-text">General Ledger</span>
                 </div>
             </a>
-
-           
+            <?php endif; ?>
+            <?php endif; ?>
 
             <!-- ADMINISTRATION SECTION -->
-            <div class="px-4 py-2 mt-4 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Administration</p>
+            <?php if ($is_supervisor || in_array('administration', $allowed_modules)): ?>
+            <div class="px-4 py-2 mt-4">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider sidebar-text">Administration</p>
             </div>
             
             <!-- User Management Dropdown -->
+            <?php if ($is_supervisor || in_array('user_management', $allowed_modules)): ?>
             <div class="relative menu-dropdown">
-                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group dropdown-toggle">
+                <button class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group dropdown-toggle">
                     <div class="flex items-center">
-                        <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                            <i data-lucide="users" class="w-5 h-5 text-sidebar-primary"></i>
+                        <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                            <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
                         </div>
-                        <span class="ml-3 sidebar-text">User management</span>
+                        <span class="ml-3 sidebar-text">User Management</span>
                     </div>
-                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-sidebar-foreground/70 dropdown-icon"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform duration-200 dropdown-arrow text-gray-400 dropdown-icon"></i>
                 </button>
                 
                 <!-- Dropdown Menu -->
                 <div class="dropdown-content overflow-hidden transition-all duration-300 max-h-0">
                     <div class="py-2 space-y-1">
-                        <a href="<?php echo $base_url; ?>/admin/department-accounts.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="user-cog" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
+                        <a href="<?php echo $base_url; ?>USM/department_accounts.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="user-cog" class="w-4 h-4 mr-3 text-blue-600"></i>
                             <span class="sidebar-text">Department Accounts</span>
                         </a>
-                       
-                        <a href="<?php echo $base_url; ?>/admin/audit-trail.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-accent-foreground group/item ml-8">
-                            <i data-lucide="history" class="w-4 h-4 mr-3 text-sidebar-primary"></i>
-                            <span class="sidebar-text">Audit Trail</span>
+                        <a href="<?php echo $base_url; ?>USM/audit_trail&transaction.php" class="flex items-center px-4 py-2 text-sm rounded-lg transition-all hover:bg-blue-50 text-gray-600 hover:text-blue-600 group/item ml-8">
+                            <i data-lucide="history" class="w-4 h-4 mr-3 text-blue-600"></i>
+                            <span class="sidebar-text">Audit Trail & Transaction</span>
                         </a>
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
+            <?php endif; ?>
 
-            <!-- Logout -->
-            <div class="px-4 py-2 mt-4 sidebar-section">
-                <p class="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider sidebar-text">Account</p>
+            <!-- Logout Section -->
+            <div class="px-4 py-2 mt-4">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider sidebar-text">Account</p>
             </div>
-            <form action="<?php echo $base_url; ?>/USM/logout.php" method="POST" class="px-4 py-3">
-                <button type="submit" class="flex items-center w-full text-sm font-medium rounded-lg transition-all hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground group">
-                    <div class="p-1.5 rounded-lg bg-sidebar-primary/10 group-hover:bg-sidebar-primary/20 transition-colors">
-                        <i data-lucide="log-out" class="w-5 h-5 text-sidebar-primary"></i>
+            <form action="<?php echo $base_url; ?>USM/logout.php" method="POST" class="px-4 py-3">
+                <button type="submit" class="flex items-center w-full text-sm font-medium rounded-lg transition-all hover:bg-blue-50 text-gray-700 hover:text-blue-600 group">
+                    <div class="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                        <i data-lucide="log-out" class="w-5 h-5 text-blue-600"></i>
                     </div>
                     <span class="ml-3 sidebar-text">Logout</span>
                 </button>
@@ -198,7 +225,7 @@ $sidebar_collapsed = $_SESSION['sidebar_collapsed'] ?? false;
 </div>
 
 <!-- Mobile Overlay -->
-<div class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden" onclick="toggleSidebar()" style="display: none;"></div>
+<div class="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden" onclick="toggleSidebar()" style="display: none;"></div>
 
 <script>
 // Mobile sidebar toggle
@@ -238,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const otherArrow = otherDropdown.querySelector('.dropdown-arrow');
                     otherContent.style.maxHeight = '0px';
                     otherArrow.style.transform = 'rotate(0deg)';
+                    otherArrow.style.transition = 'transform 0.3s ease';
                     otherDropdown.classList.remove('active');
                 }
             });
@@ -263,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const arrow = dropdown.querySelector('.dropdown-arrow');
                 content.style.maxHeight = '0px';
                 arrow.style.transform = 'rotate(0deg)';
+                arrow.style.transition = 'transform 0.3s ease';
                 dropdown.classList.remove('active');
             });
         }
@@ -304,21 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
         #sidebar.-translate-x-full {
             transform: translateX(-100%);
         }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 30;
-            display: none;
-        }
-        
-        #sidebar.translate-x-0 + .sidebar-overlay {
-            display: block;
-        }
     }
 
     /* Desktop collapsed styles */
@@ -348,30 +362,6 @@ document.addEventListener('DOMContentLoaded', function() {
         margin-right: 0;
     }
     
-    /* Hide scrollbar but keep scrolling */
-    #sidebar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    
-    #sidebar::-webkit-scrollbar {
-        display: none;
-    }
-    
-    /* Only show scrollbar on hover */
-    .overflow-hidden {
-        overflow: hidden;
-    }
-    
-    .hover\:overflow-y-auto:hover {
-        overflow-y: auto;
-    }
-
-    /* Smooth transitions */
-    #sidebar {
-        transition: all 0.3s ease;
-    }
-
     /* Dropdown animations */
     .dropdown-content {
         transition: max-height 0.3s ease;
@@ -379,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /* Active dropdown styles */
     .menu-dropdown.active .dropdown-toggle {
-        background-color: rgba(59, 130, 246, 0.1);
+        background-color: #eff6ff;
     }
     
     .menu-dropdown.active .dropdown-toggle .dropdown-arrow {
@@ -389,42 +379,5 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Cursor pointer for dropdown toggles */
     .dropdown-toggle {
         cursor: pointer;
-    }
-
-    /* Sidebar color variables */
-    .bg-sidebar {
-        background-color: #001f54;
-    }
-    
-    .border-sidebar-border {
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .text-sidebar-foreground {
-        color: white;
-    }
-    
-    .text-sidebar-foreground\/70 {
-        color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .bg-sidebar-primary {
-        background-color: #F7B32B;
-    }
-    
-    .text-sidebar-primary {
-        color: #F7B32B;
-    }
-    
-    .text-sidebar-primary-foreground {
-        color: #001f54;
-    }
-    
-    .hover\:bg-sidebar-accent:hover {
-        background-color: rgba(247, 179, 43, 0.1);
-    }
-    
-    .hover\:text-sidebar-accent-foreground:hover {
-        color: #F7B32B;
     }
 </style>
