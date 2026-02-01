@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-include("../main_connection.php");
+include("../API_gateway.php");
 
-$db_name = "rest_core_2_usm";
+$db_name = "fina_budget";
 $conn = $connections[$db_name] ?? die("❌ Connection not found for $db_name");
 
 // Get current logged-in user
@@ -42,9 +42,9 @@ $dept_result = $dept_stmt->get_result();
 
 if ($dept_result->num_rows > 0) {
     $dept_data = $dept_result->fetch_assoc();
-    $formatted_dept = "Restaurant - Dept " . htmlspecialchars($dept_data['dept_id'] ?? 'IT');
+    $formatted_dept = "FINANCIALS - Dept " . htmlspecialchars($dept_data['dept_id'] ?? 'IT');
 } else {
-    $formatted_dept = "Restaurant - Dept IT";
+    $formatted_dept = "FINANCIALS - Dept IT";
 }
 
 // ========== LOGIN LOGS WITH PAGINATION ==========
@@ -320,7 +320,7 @@ $user = [
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My Profile | Soliera Restaurant</title>
+    <title>My Profile | Financials</title>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     
@@ -515,12 +515,12 @@ $user = [
 <body class="min-h-screen">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <?php include '../sidebarr.php'; ?>
+    <?php include '../COMPONENTS/sidebar.php'; ?>
 
     <!-- Content Area -->
     <div class="flex flex-col flex-1 overflow-auto bg-gray-50">
       <!-- Navbar -->
-      <?php include '../navbar.php'; ?>
+      <?php include '../COMPONENTS/navbar.php'; ?>
 
       <!-- Main Content -->
       <main class="p-6">

@@ -14,7 +14,7 @@ if (!isset($_SESSION['role'])) {
     exit;
 }
 
-// Get role from session (no need to normalize if your role_permissions uses exact role names)
+// Get role from session
 $session_role = $_SESSION['role'];
 $permissions = include 'role_permissions.php';
 $allowed_modules = $permissions[$session_role] ?? [];
@@ -27,25 +27,28 @@ $allowed_modules = $permissions[$session_role] ?? [];
 
 // Mapping of modules to their landing pages
 $module_to_landing = [
-    // CORE 2 MODULES
-    'analytics' => '../Analytics/Analytics_metabase.php',
-    'table_reservation' => '../M1/calendar.php',
+    // BUDGET DEPARTMENT MODULES
+    'budget_management' => '../Budget/main.php',
+    'budget_preparation' => '../Budget/budget_preparation.php',
+    'budget_monitoring' => '../Budget/budget_monitoring.php',
+    'budget_reporting' => '../Budget/budget_reports.php',
     'user_management' => 'department_accounts.php',
-    'kitchen_orders' => '../M5/main.php',
-    'inventory' => '../M2/main.php',
-    'menu_management' => '../M3/main.php',
-    'event_management' => '../M6/main_reservation.php', // Fixed typo: resevation -> reservation
-    'table_turnover' => '../M8/turnover_main.php',
-    'pos_system' => '../M4/employee_main.php',
-    'billing' => '../M7/main.php',
-    'staff_management' => '../M9/wait_main.php',
-    'customer_feedback' => '../M10/comments_main.php', // Fixed: was pointing to wait_main.php
-    'USM' => 'profile.php', // Fixed: was pointing to wait_main.php
-
+    'analytics' => '../Analytics/Analytics_metabase.php',
+    
+    // FINANCE MODULES
+    'general_ledger' => '../Finance/general_ledger.php',
+    'accounts_payable' => '../Finance/accounts_payable.php',
+    'accounts_receivable' => '../Finance/accounts_receivable.php',
+    'disbursement' => '../Finance/disbursement.php',
+    'collection' => '../Finance/collection.php',
+    
+    // ADMINISTRATION
+    'profile' => 'profile.php',
+    'settings' => 'settings.php',
 ];
 
-// For supervisors/admins, redirect to analytics dashboard
-if ($session_role === 'supervisor' || $session_role === 'admin') {
+// For supervisors/admins, redirect to profile
+if ($session_role === 'superviser' || $session_role === 'admin') {
     header("Location: profile.php");
     exit;
 }
@@ -58,28 +61,7 @@ foreach ($allowed_modules as $module) {
     }
 }
 
-// Fallback for all other cases - redirect to a default page based on role
-switch($session_role) {
-    case 'cashier':
-        header("Location: ../M4/employee_main.php");
-        break;
-    case 'security':
-        header("Location: department_accounts.php");
-        break;
-    case 'reservation':
-        header("Location: ../M1/calendar.php");
-        break;
-    case 'inventory':
-        header("Location: ../M2/main.php");
-        break;
-    case 'waiter':
-    case 'waitress':
-        header("Location: ../M9/wait_main.php");
-        break;
-    case 'head':
-        header("Location: ../M5/main.php");
-        break;
-    default:
-        header("Location: index.php");
-}
+// Fallback for all other cases - redirect to Budget/main.php
+header("Location: ../Budget/main.php");
 exit;
+?>

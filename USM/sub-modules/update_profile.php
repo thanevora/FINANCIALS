@@ -9,16 +9,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Get the correct path for main_connection.php
-if (file_exists("../../main_connection.php")) {
-    include("../../main_connection.php");
-} elseif (file_exists("../main_connection.php")) {
-    include("../main_connection.php");
+if (file_exists("../../API_gateway.php")) {
+    include("../../API_gateway.php");
+} elseif (file_exists("../API_gateway.php")) {
+    include("../API_gateway.php");
 } else {
     echo json_encode(['success' => false, 'message' => 'Database connection file not found']);
     exit;
 }
 
-$db_name = "rest_core_2_usm";
+$db_name = "fina_budget";
 if (!isset($connections[$db_name])) {
     echo json_encode(['success' => false, 'message' => 'Database connection not found']);
     exit;

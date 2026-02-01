@@ -1,8 +1,8 @@
 <?php
 
-include("../../main_connection.php");
+include("../../API_gateway.php");
 
-$db_name = "rest_core_2_usm";
+$db_name = "fina_budget";
 $conn = $connections[$db_name] ?? die("❌ Connection not found for $db_name");
 
 $type = $_GET['type'] ?? 'department';

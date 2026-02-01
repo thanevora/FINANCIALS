@@ -5,10 +5,6 @@ include("API_gateway.php");
 $baseUrl = isset($_SERVER['HTTPS']) ? "https://" : "http://";
 $baseUrl .= $_SERVER['HTTP_HOST'] . 'localhost';
 
-// Check if image exists
-$imagePath = '../images/hotel3.jpg';
-$imageExists = file_exists($imagePath);
-
 // Database connection - only using fina_budget
 $cr2_usm = $connections["fina_budget"];
 
@@ -78,34 +74,13 @@ function sendOTP($email, $otp) {
     $mail->SMTPSecure = 'tls';
     $mail->Port = 587;
 
-    $mail->setFrom('Soliera_Hotel&Restaurant@gmail.com', 'Soliera 2FA Authenticator');
+    $mail->setFrom('system@example.com', 'System Administrator');
     $mail->addAddress($email);
-    $mail->Subject = 'Soliera 2FA Verification Code';
+    $mail->Subject = 'Your Verification Code';
 
-    // Email content
-    $header = "<h2 style='color:#4CAF50; font-family: Arial, sans-serif;'>Soliera Hotel & Restaurant</h2>
-               <hr style='border:1px solid #ddd;'>";
-    $message = "<p style='font-family: Arial, sans-serif; font-size:14px;'>
-                    <br>
-                    We received a request to verify your login to <strong>Soliera Hotel & Restaurant</strong>.
-                    Please use the one-time verification code below to complete your login:
-                </p>
-                <p style='font-size:22px; font-weight:bold; color:#333; letter-spacing:2px;'>
-                    $otp
-                </p>
-                <p style='font-family: Arial, sans-serif; font-size:14px; color:#555;'>
-                    This code will expire in <strong>5 minutes</strong> for your security.
-                    If you did not request this code, please ignore this email or contact our support team immediately.
-                </p>";
-    $footer = "<hr style='border:1px solid #ddd;'>
-               <p style='font-size:12px; color:#777; font-family: Arial, sans-serif;'>
-                    Thank you for choosing Soliera.<br>
-                    📞 Hotline: +63-900-123-4567 | 📧 support@soliera.com<br>
-                    <em>This is an automated message. Please do not reply directly to this email.</em>
-               </p>";
-
+    // Default email content
     $mail->isHTML(true);
-    $mail->Body = $header . $message . $footer;
+    $mail->Body = "Your OTP code is: <strong>$otp</strong><br>This code will expire in 5 minutes.";
 
     return $mail->send();
 }
@@ -235,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Soliera Hotel - Department Login</title>
+    <title>Financial System Login</title>
     
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -246,25 +221,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
     <?php endif; ?>
     
     <style>
-        .bg-fallback {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
         .puzzle-box {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
             padding: 15px;
             border-radius: 10px;
             margin-top: 10px;
         }
         .offline-notice {
-            background: rgba(255, 193, 7, 0.2);
+            background: #fff3cd;
             border: 1px solid #ffc107;
+            color: #856404;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 15px;
@@ -273,53 +253,155 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
             gap: 10px;
         }
         .puzzle-refresh {
-            color: #F7B32B;
+            color: #4a5568;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 500;
         }
         .puzzle-refresh:hover {
-            color: #EDB886;
+            color: #2d3748;
             transform: rotate(180deg);
+        }
+        .form-input {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .form-input:focus {
+            background: white;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .login-btn {
+            background: blue;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+        .logo-side {
+            background: white;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .logo-img {
+            max-height: 120px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+        }
+        .logo-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .logo-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-align: center;
+        }
+        .form-side {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-out;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .login-main-container {
+                flex-direction: column;
+            }
+            .logo-side {
+                padding: 1.5rem;
+                min-height: 200px;
+            }
+            .logo-img {
+                max-height: 80px;
+            }
+            .logo-title {
+                font-size: 1.5rem;
+            }
+            .form-side {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen p-4">
    
-   <section class="relative w-full h-screen">
-        <!-- Background image with overlay -->
-        <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('<?php echo $imageExists ? $imagePath : ''; ?>');">
-            <!-- Fallback in case image doesn't load -->
-            <?php if (!$imageExists): ?>
-                <div class="bg-fallback w-full h-full">
-                    <div>Soliera Hotel & Restaurant</div>
+    <div class="w-full max-w-4xl">
+        <div class="login-main-container flex flex-col md:flex-row">
+            <!-- Left Side: Logo & Branding -->
+            <div class="logo-side md:w-2/5">
+                <div class="flex flex-col items-center justify-center h-full">
+                    <img src="images/logo.jpg" alt="Financial System Logo" class="logo-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgZmlsbD0iI2ZmZmZmZiIgcng9IjIwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdFRUEiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiPkY8L3RleHQ+PC9zdmc+'">
+                    <div class="text-center">
+                        <h1 class="logo-title">Financial System</h1>
+                        <p class="logo-subtitle">Budget & Finance Department</p>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm opacity-80">Secure access to financial management tools and resources.</p>
+                    </div>
                 </div>
-            <?php endif; ?>
-        </div>
-        <div class="absolute inset-0 bg-black/40 z-10"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/70 z-10"></div>
-  
-        <!-- Centered Login Form -->
-        <div class="relative z-10 w-full h-full flex justify-center items-center p-4">
-            <div class="w-full max-w-md">
-                <div class="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-2xl border border-white/20">
-                  
+            </div>
+            
+            <!-- Right Side: Login Form -->
+            <div class="form-side md:w-3/5">
+                <div class="w-full">
+                   
                     
-                    <!-- Login Form -->
                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                        <?php if (!$isOnline): ?>
+                        <div class="offline-notice">
+                            <i class='bx bx-wifi-off text-yellow-600'></i>
+                            <span>You are currently offline. CAPTCHA is disabled.</span>
+                        </div>
+                        <?php endif; ?>
+                        
                         <!-- Employee ID Input -->
-                        <div class="mb-4">
-                            <label class="block text-white/90 text-sm font-medium mb-2" for="employee_id">
+                        <div class="mb-5">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="employee_id">
                                 Employee ID
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class='bx bx-user text-white/50'></i>
+                                    <i class='bx bx-user text-gray-400'></i>
                                 </div>
                                 <input 
                                     id="employee_id" 
                                     type="text" 
-                                    class="w-full pl-10 pr-3 py-3 bg-white/5 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent placeholder-white/50" 
-                                    placeholder="Your Employee ID"
+                                    class="w-full pl-10 pr-3 py-3 form-input rounded-lg focus:outline-none text-gray-800 placeholder-gray-500" 
+                                    placeholder="Enter your employee ID"
                                     required
                                     name="employee_id"
                                     value="<?php echo htmlspecialchars($employee_ID); ?>"
@@ -328,25 +410,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
                         </div>
                         
                         <!-- Password Input -->
-                        <div class="mb-4">
-                            <label class="block text-white/90 text-sm font-medium mb-2" for="password">
+                        <div class="mb-5">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2" for="password">
                                 Password
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class='bx bx-key text-white/50'></i>
+                                    <i class='bx bx-key text-gray-400'></i>
                                 </div>
                                 <input 
                                     id="password" 
                                     type="password" 
-                                    class="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent placeholder-white/50" 
-                                    placeholder="Password"
+                                    class="w-full pl-10 pr-10 py-3 form-input rounded-lg focus:outline-none text-gray-800 placeholder-gray-500" 
+                                    placeholder="Enter your password"
                                     required
                                     name="password"
                                 >
                                 <button 
                                     type="button" 
-                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white focus:outline-none"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
                                     onclick="togglePasswordVisibility()"
                                 >
                                     <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -362,94 +444,94 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
                         </div>
                         
                         <!-- Puzzle Section -->
-                        <div class="mb-4">
+                        <div class="mb-5">
                             <div class="flex justify-between items-center mb-2">
-                                <label class="block text-white/90 text-sm font-medium">
-                                    Security Puzzle
+                                <label class="block text-gray-700 text-sm font-semibold">
+                                    Security Verification
                                 </label>
                                 <button type="button" onclick="refreshPuzzle()" class="puzzle-refresh text-xs flex items-center gap-1">
                                     <i class='bx bx-refresh'></i> New Puzzle
                                 </button>
                             </div>
                             <div class="puzzle-box">
-                                <p id="puzzle-question" class="text-white font-semibold mb-2"><?php echo htmlspecialchars($_SESSION['puzzle_question'] ?? 'Solve the puzzle'); ?></p>
+                                <p id="puzzle-question" class="text-gray-800 font-semibold mb-2"><?php echo htmlspecialchars($_SESSION['puzzle_question'] ?? 'Solve the puzzle'); ?></p>
                                 <input 
                                     type="text" 
                                     name="puzzle_answer" 
                                     id="puzzle_answer"
-                                    class="w-full px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent placeholder-white/50"
-                                    placeholder="Your answer"
+                                    class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                                    placeholder="Enter your answer"
                                     required
                                 >
-                                <p class="text-white/70 text-xs mt-2">Solve this puzzle to continue (case-insensitive)</p>
+                                <p class="text-gray-600 text-xs mt-2">Solve this puzzle to continue (case-insensitive)</p>
                             </div>
                         </div>
                         
                         <!-- CAPTCHA -->
                         <?php if ($isOnline): ?>
-                        <div class="mb-4">
+                        <div class="mb-5">
                             <div class="g-recaptcha" data-sitekey="6Ld4W8ArAAAAAK3qsDWjdvj6MNiXFJDPMgHGfhrw"></div>
                         </div>
-                        <?php else: ?>
-                        
                         <?php endif; ?>
                         
                         <!-- Login Button -->
                         <button 
                             type="submit" 
-                            class="w-full bg-gradient-to-r from-[#EDB886] to-[#F7B32B] hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg transition duration-300 mt-2"
+                            class="w-full login-btn py-3 px-4 rounded-lg transition duration-300 mt-2"
                         >
-                            <i class='bx bx-log-in mr-2'></i> Login
+                            <i class='bx bx-log-in mr-2'></i> Login to System
                         </button>
                     </form>
                     
                     <!-- Footer Links -->
-                    <div class="mt-6 pt-6 border-t border-white/20 text-center">
-                        <div class="text-sm text-white/70">
-                            <a href="javascript:void(0)" onclick="toggleForgotModal(true)" class="hover:text-white transition">
-                                <i class='bx bx-help-circle mr-1'></i> Forgot Password?
-                            </a>
-                        </div>
-                        <div class="mt-4 text-xs text-white/50">
-                            Build By: BSIT - 4102 | Cluster 2
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-600">
+                                <a href="javascript:void(0)" onclick="toggleForgotModal(true)" class="hover:text-blue-600 transition font-medium">
+                                    <i class='bx bx-help-circle mr-1'></i> Forgot Password?
+                                </a>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                &copy; <?php echo date('Y'); ?> Financials Department
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Forgot Password Modal -->
-        <div id="forgot-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm hidden items-center justify-center z-50">
-            <div class="bg-white/90 backdrop-blur-md rounded-xl p-6 w-full max-w-md shadow-xl border border-white/20">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Reset Password</h2>
-                    <button onclick="toggleForgotModal(false)" class="text-gray-500 hover:text-gray-700">
-                        <i class='bx bx-x text-xl'></i>
-                    </button>
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Reset Password</h2>
+                <button onclick="toggleForgotModal(false)" class="text-gray-500 hover:text-gray-700">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+            </div>
+            
+            <form action="forgot_password.php" method="POST">
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" name="email" required 
+                           class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Enter your registered email">
                 </div>
                 
-                <form action="forgot_password.php" method="POST">
-                    <div class="mb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Email Address</label>
-                        <input type="email" name="email" required 
-                               class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               placeholder="Enter your registered email">
-                    </div>
-                    
-                    <div class="flex justify-end gap-3">
-                        <button type="button" onclick="toggleForgotModal(false)" 
-                                class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">
-                            Send Reset Link
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="toggleForgotModal(false)" 
+                            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">
+                        Send Reset Link
+                    </button>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script>
@@ -506,7 +588,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
             .then(data => {
                 if (data.success) {
                     puzzleQuestion.textContent = data.question;
-                    // Show success message
                     showToast('New puzzle loaded!', 'success');
                 } else {
                     showToast('Failed to load new puzzle. Please refresh page.', 'error');
@@ -517,7 +598,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
                 showToast('Error loading puzzle. Please refresh page.', 'error');
             })
             .finally(() => {
-                // Reset button
                 refreshBtn.innerHTML = '<i class="bx bx-refresh"></i> New Puzzle';
                 refreshBtn.disabled = false;
             });
@@ -525,20 +605,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
         
         // Show toast notification
         function showToast(message, type = 'success') {
-            // Remove existing toasts
             const existingToasts = document.querySelectorAll('.toast-message');
             existingToasts.forEach(toast => toast.remove());
             
-            // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast-message fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
-                type === 'success' ? 'bg-green-600' : 'bg-red-600'
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
             } text-white animate-fade-in`;
             toast.textContent = message;
             
             document.body.appendChild(toast);
             
-            // Remove toast after 3 seconds
             setTimeout(() => {
                 toast.classList.add('animate-fade-out');
                 setTimeout(() => {
@@ -549,32 +626,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $employee_ID && $password) {
             }, 3000);
         }
         
-        // Add CSS animations for toast
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fade-in {
-                from { opacity: 0; transform: translateY(-20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            @keyframes fade-out {
-                from { opacity: 1; transform: translateY(0); }
-                to { opacity: 0; transform: translateY(-20px); }
-            }
-            .animate-fade-in {
-                animation: fade-in 0.3s ease-out;
-            }
-            .animate-fade-out {
-                animation: fade-out 0.3s ease-out;
-            }
-            .animate-spin {
-                animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
+        // Check if logo image exists, fallback to SVG
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.querySelector('.logo-img');
+            logoImg.onerror = function() {
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgZmlsbD0iI2ZmZmZmZiIgcng9IjIwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdFRUEiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMiIgZm9udC13ZWlnaHQ9ImJvbGQiPkY8L3RleHQ+PC9zdmc+';
+                this.alt = 'Financial System Logo';
+            };
+        });
     </script>
     
     <?php if (isset($_SESSION["loginError"])): ?>

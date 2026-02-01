@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../main_connection.php'; // 🔹 adjust path to your DB connection
+require '../API_gateway.php'; // 🔹 adjust path to your DB connection
 
 // Capture session details before destroying
 $employee_id   = $_SESSION['employee_id'] ?? null;
@@ -12,7 +12,7 @@ $role          = $_SESSION['role'] ?? null;
 if ($employee_id && $employee_name) {
     try {
         // Switch to rest_core_2_usm DB
-        $dbName = "rest_core_2_usm";
+        $dbName = "fina_budget";
         $db = $connections[$dbName] ?? null;
 
         if ($db) {
@@ -54,5 +54,5 @@ if (ini_get("session.use_cookies")) {
 }
 
 // Redirect to login page
-header("Location: index.php");
+header("Location: ../index.php");
 exit;

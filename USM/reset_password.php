@@ -1,14 +1,14 @@
 <?php
 session_start();
-include("../main_connection.php"); // your DB connection
+include("../API_gateway.php"); // your DB connection
 
 // Redirect to login_main.php if not accessing the reset password functionality
 if (!isset($_GET['token'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
-$db_name = "rest_core_2_usm"; 
+$db_name = "fina_budget"; 
 if (!isset($connections[$db_name])) {
     die("❌ Connection not found for $db_name");
 }
@@ -28,13 +28,13 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if (!$user) {
-    header("Location: index.php.php?error=invalid_token");
+    header("Location: ../index.php.php?error=invalid_token");
     exit();
 }
 
 // Check if token is expired
 if (strtotime($user['expired_at']) < time()) {
-    header("Location: index.php.php?error=expired_token");
+    header("Location: ../index.php.php?error=expired_token");
     exit();
 }
 

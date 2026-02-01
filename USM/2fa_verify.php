@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../main_connection.php");
+include("../API_gateway.php");
 
 define('MAX_ATTEMPTS', 5);
 define('MAX_OTP_ATTEMPTS', 3);
@@ -34,7 +34,7 @@ define('DEFAULT_OTP', '4562526');
 $allowedDefaultOTPRoles = ['superviser', 'admin', 'manager'];
 
 // Use the correct database connection for department_accounts
-$db_name = "rest_core_2_usm";
+$db_name = "fina_budget";
 $conn = $connections[$db_name] ?? null;
 
 if (!$conn) {

@@ -1,8 +1,8 @@
 <?php
 session_start();
-include("../main_connection.php");
+include("../API_gateway.php");
 
-$db_name = "rest_core_2_usm";
+$db_name = "fina_budget";
 $conn = $connections[$db_name] ?? die("❌ Connection not found for $db_name");
 
 // Pagination settings
@@ -32,7 +32,7 @@ if ($result) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-      <?php include '../header.php'; ?>
+      <?php include '../COMPONENTS/header.php'; ?>
 
 <head>
     <meta charset="UTF-8" />
@@ -121,12 +121,12 @@ if ($result) {
 <body class="min-h-screen">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <?php include '../sidebarr.php'; ?>
+    <?php include '../COMPONENTS/sidebar.php'; ?>
 
     <!-- Content Area -->
     <div class="flex flex-col flex-1 overflow-auto bg-gray-50">
       <!-- Navbar -->
-      <?php include '../navbar.php'; ?>
+      <?php include '../COMPONENTS/navbar.php'; ?>
 
       <!-- Main Content -->
       <main class="p-6">
